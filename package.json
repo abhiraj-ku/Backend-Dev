@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "name": "learning-backend",
+  "version": "1.0.0",
+  "main": "expressServer.js",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhiraj-ku/Backend-Dev.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abhiraj-ku/Backend-Dev/issues"
+  },
+  "homepage": "https://github.com/abhiraj-ku/Backend-Dev#readme",
+  "description": ""
+}
