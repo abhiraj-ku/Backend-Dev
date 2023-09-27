@@ -3,10 +3,10 @@ const PORT = 3000;
 const app = express();
 
 app.get("/", (req, res) => {
-  res.sendFile("./views/index.html", { root: __dirname });
+  res.send("hello lawde");
 });
 app.get("/about", (req, res) => {
-  res.send("<h1>About Me :fdfdfdfsgfgfgfgfgfvcvcbvbggsfdzdgfsgdsgds </h1>");
+  res.send("<h1>About Me</h1>");
 });
 
 //Redirects
