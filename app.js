@@ -6,7 +6,7 @@ app.get("/", (req, res) => {
   res.send("hello lawde");
 });
 app.get("/about", (req, res) => {
-  res.send("<h1>About Me</h1>");
+  res.send("About Me");
 });
 
 //Redirects
