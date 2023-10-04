@@ -1,7 +1,14 @@
 const express = require("express");
 const app = express();
 const port = 3000;
+const swaggerUi = require("swagger-ui-express");
+const YAML = require("yaml");
+const swaggerDocument = require("./swagger.yaml");
 
+//middleware
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+//home Route
 app.get("/", (req, res) => {
   res.status(200).send("<h1>Hello bhen ke lawde</h1>");
 });
@@ -44,6 +51,8 @@ app.get("/api/v1/:token", (req, res) => {
   const param = req.params.token;
   res.status(200).json({ param });
 });
+
+//server listens
 app.listen(port, () => {
   console.log(`Server is up and running at port:${port}`);
 });
