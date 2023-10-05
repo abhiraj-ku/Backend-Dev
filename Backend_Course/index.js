@@ -1,11 +1,13 @@
 const express = require("express");
 const app = express();
 const port = 3000;
+const fs = require("fs");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yaml");
-const swaggerDocument = require("./swagger.yaml");
 
-//middleware
+const file = fs.readFileSync("./swagger.yaml", "utf8");
+const swaggerDocument = YAML.parse(file);
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //home Route

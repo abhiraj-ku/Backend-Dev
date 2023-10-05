@@ -1,1 +1,71 @@
 openapi: 3.0.0
+info:
+  title: Social App
+  description: our Social details app - Abhishek Kumar
+  version: 1.0.1
+servers:
+  - url: http://localhost:3000/api/v1
+    description: localhost version of our app
+  - url: https://staging-api.example.com
+    description: This is a dummy for our deployed version of our app
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer
+paths:
+  /instagram:
+    get:
+      summary: returns username ,Follower count and no of people you follow
+      responses:
+        "200": #status code
+          description: returns an object of above mentioned things
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  followers:
+                    type: string
+                  follows:
+                    type: string
+    post:
+      summary: returns username ,Follower count and no of people you follow
+      responses:
+        "200": #status code
+          description: returns an object of above mentioned things
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  followers:
+                    type: string
+                  follows:
+                    type: string
+  /{token}:
+    get:
+      summary: returns whatever is there in params
+      parameters:
+        - name: token
+          default: 5
+          in: path
+          schema:
+            type: string
+      responses:
+        "200": #status code
+          description: returns an object of above mentioned things
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  params:
+                    type: string
