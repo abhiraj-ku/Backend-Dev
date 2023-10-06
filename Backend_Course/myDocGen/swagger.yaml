@@ -1,0 +1,107 @@
+openapi: 3.0.0
+info:
+  title: Learn express and swagger - by @abhirajabhi312
+  description: A Docs about the fucking great project
+  version: 1.0.1
+  contact:
+    email: abhi_greatcoder@gmail.com
+    url: "https://www.abhishek.ai"
+# servers:
+#   - url: "http://localhost:3000/api/v1"
+#     description: for localhost deployment
+#   - url: "https://localhost:3000/api/v1"
+#     description: for secure localhost deployment
+
+servers:
+  - url: "{protocol}://localhost:3000/api/{version}"
+    description: for localhost
+    variables:
+      version:
+        enum:
+          - v1
+          - v2
+        default: v1
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+paths:
+  /arko:
+    get:
+      tags:
+        - string
+      summary: return greeting from arko sols
+      responses:
+        200:
+          description: all good success
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "mystring"
+        400:
+          description: bad request
+        500:
+          description: server error
+
+  /arkoobject:
+    get:
+      tags:
+        - object
+      summary: return unique course details
+      responses:
+        200:
+          description: all good success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  price:
+                    type: number
+        400:
+          description: bad request
+        500:
+          description: server error
+
+  /courses:
+    get:
+      tags:
+        - Array
+      summary: return types of courses available
+      responses:
+        200:
+          description: all good success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    price:
+                      type: number
+        400:
+          description: bad request
+        500:
+          description: server error
