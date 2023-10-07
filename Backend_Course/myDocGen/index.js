@@ -42,9 +42,8 @@ app.get("/api/v1/arkoobject", (req, res) => {
 
 app.get("/api/v1/courses", (req, res) => {
   res.send({ courses });
-  console.log(req.params.name);
 });
 
 app.listen(port, () => {
-  console.log("app is listening");
+  console.log(`app is listening at port ${port}`);
 });
