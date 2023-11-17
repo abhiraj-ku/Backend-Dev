@@ -5,9 +5,11 @@ const User = require("./model/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const auth = require("./middleware/auth.js");
+const cookieparser = require("cookie-parser");
 
 const app = express();
 app.use(express.json());
+app.use(cookieparser());
 app.get("/", (req, res) => {
   res.send("<h1> Hello from abhi</h1>");
 });
