@@ -12,7 +12,6 @@ app.get("/", (req, res) => {
 });
 
 //post route
-
 app.post("/register", async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
@@ -45,6 +44,35 @@ app.post("/register", async (req, res) => {
   } catch (error) {
     console.error("Error during user registration:", error);
     res.status(500).send("Internal Server Error");
+  }
+});
+
+//login route
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    //check if they are there or not
+    // if (!(email && password)) {
+    //   res.status(400).send("Some fields are missing");
+    // }
+    const presentUser = await User.findOne({ email });
+    if (presentUser && (await bcrypt.compare(password, presentUser.password))) {
+      const token = jwt.sign(
+        { user_id: presentUser._id, email },
+        process.env.SECRET_KEY,
+        {
+          expiresIn: "2h",
+        }
+      );
+      presentUser.token = token;
+      presentUser.password = undefined;
+      res.status(200).send(presentUser);
+    }
+    res.status(400).send("incorrect");
+    console.log(presentUser);
+  } catch (error) {
+    console.log("error occured while login :", error);
   }
 });
 
