@@ -4,6 +4,7 @@ const express = require("express");
 const User = require("./model/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const auth = require("./middleware/auth.js");
 
 const app = express();
 app.use(express.json());
@@ -67,13 +68,26 @@ app.post("/login", async (req, res) => {
       );
       presentUser.token = token;
       presentUser.password = undefined;
-      res.status(200).send(presentUser);
+
+      const options = {
+        expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+      };
+      res.status(200).cookie("token", token, options).json({
+        success: true,
+        token,
+      });
     }
     res.status(400).send("incorrect");
     console.log(presentUser);
   } catch (error) {
     console.log("error occured while login :", error);
   }
+});
+
+//dashboard only if user is logged in
+app.get("/dashboard", auth, (req, res) => {
+  res.send("welcome to dashboard");
 });
 
 module.exports = app;
