@@ -5,7 +5,7 @@ const User = require("./model/user");
 const bcrypt = require("bcryptjs");
 
 const app = express();
-
+app.use(express.json());
 app.get("/", (req, res) => {
   res.send("<h1> Hello from abhi</h1>");
 });
