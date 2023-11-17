@@ -3,6 +3,7 @@ require("./config/database.js").connect();
 const express = require("express");
 const User = require("./model/user");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 app.use(express.json());
@@ -13,26 +14,38 @@ app.get("/", (req, res) => {
 //post route
 
 app.post("/register", async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  try {
+    const { firstName, lastName, email, password } = req.body;
 
-  if (!(email && password && firstName && lastName)) {
-    res.status(400).send("all fields are mandatory");
+    if (!(email && password && firstName && lastName)) {
+      res.status(400).send("All fields are mandatory");
+      return; // Add return to exit the function early
+    }
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      res.status(401).send("User already exists");
+      return; // Add return to exit the function early
+    }
+    const encryptedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      firstName,
+      lastName,
+      email: email.toLowerCase(),
+      password: encryptedPassword,
+    });
+    // Token
+    const token = jwt.sign({ user_id: user._id }, process.env.SECRET_KEY, {
+      expiresIn: "2h",
+    });
+    user.token = token;
+    user.password = undefined;
+    res.status(201).json(user);
+  } catch (error) {
+    console.error("Error during user registration:", error);
+    res.status(500).send("Internal Server Error");
   }
-
-  const existingUser = await User.findOne({ email });
-
-  if (existingUser) {
-    res.status(401).send("User already exist");
-  }
-
-  const encypPassword = await bcrypt.hash(password, 10);
-
-  const user = await User.create({
-    firstName,
-    lastName,
-    email: email.toLowerCase(),
-    password: encypPassword,
-  }).then();
 });
 
 module.exports = app;
