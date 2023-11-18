@@ -25,7 +25,12 @@
   <body class="bg-black text-white">
     <div class="container">
       <h1>Post Form</h1>
-      <form>
+      <form method="POST" action="/postit" enctype="multipart/form-data">
+        <!-- 
+            enctype="multipart/form-data"
+            is used to handle file upload
+       -->
+
         <div class="mb-3">
           <label for="FirstName" class="form-label">First Name</label>
           <input
@@ -42,6 +47,16 @@
             name="lastName"
             class="form-control"
             id="LastName"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="samplefile" class="form-label">samplefile</label>
+          <input
+            type="file"
+            class="form-control"
+            name="image"
+            id="image"
+            accept="image"
           />
         </div>
 
