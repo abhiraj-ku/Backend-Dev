@@ -1,0 +1,8 @@
+1.) app.use(express.urlencoded({ extended: true })); //neccesary for form encoded data
+
+2.) app.get("/getit", (req, res) => {
+  console.log(req.body);
+
+  // res.send(req.body);    //for normal (react,js) the data is recieved via req.body
+  res.send(req.query); // for templates its req.query where data is send
+});
