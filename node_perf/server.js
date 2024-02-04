@@ -6,7 +6,7 @@ const app = express();
 function delay(dur) {
   const startTime = Date.now();
   while (Date.now() - startTime < dur) {
-    // console.log("hello world");
+    console.log("hello world");
   }
 }
 
