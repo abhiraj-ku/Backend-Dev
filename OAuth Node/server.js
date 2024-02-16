@@ -20,7 +20,10 @@ const AUTH_OPTIONS = {
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
 };
-function verifyCallback(accessToken, refreshToken, profile, done) {}
+function verifyCallback(accessToken, refreshToken, profile, done) {
+  console.log("Google Profile", profile);
+  done();
+}
 // Passport strategy
 passport.use(new Strategy(AUTH_OPTIONS, verifyCallback));
 
@@ -30,18 +33,32 @@ app.use(passport.initialize());
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["email"],
+  })
+);
 
-app.get("/auth/google", (req, res) => {
-  res.send("Google OAuth app consent screen");
-});
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/failure",
+    successRedirect: "/",
+    session: false,
+  }),
+  (req, res) => {
+    console.log("Google called us back");
+  }
+);
 
 app.get("/secret", (req, res) => {
   res.send("Your personal secret value is 42!");
 });
-
 app.get("/failure", (req, res) => {
-  res.send("Failed to log in!");
+  res.send("Failed to log in with Google!");
 });
+
 try {
   const server = https.createServer(
     {
