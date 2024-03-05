@@ -1,6 +1,7 @@
 // const express = require("express");
 import express from "express";
 import dotenv from "dotenv";
+import morgan from "morgan";
 import connectDb from "./config/db.js";
 import testRoute from "./routes/testRoute.js";
 const app = express();
@@ -11,6 +12,10 @@ const PORT = process.env.PORT || 8080;
 
 // database connection
 connectDb();
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(morgan("tiny"));
 
 app.get("/", (req, res) => {
   res.send("<h1>Hello from backend</h1>");
