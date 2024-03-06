@@ -4,7 +4,8 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import cors from "cors";
 import connectDb from "./config/db.js";
-import testRoute from "./routes/testRoute.js";
+// import testRoute from "./routes/testRoute.js";
+import authRoute from "./routes/authRoute.js";
 const app = express();
 
 //doenv config
@@ -23,7 +24,8 @@ app.get("/", (req, res) => {
   res.send("<h1>Hello from backend</h1>");
 });
 // middeware
-app.use("/api/v1/test", testRoute);
+// app.use("/api/v1/test", testRoute);
+app.use("/api/v1/test", authRoute);
 
 app.listen(PORT, () => {
   console.log(`connected to port ${PORT} ....`);
