@@ -6,6 +6,7 @@ import cors from "cors";
 import connectDb from "./config/db.js";
 import testRoute from "./routes/testRoute.js";
 import authRoute from "./routes/authRoute.js";
+import userRoute from "./routes/userRoute.js";
 const app = express();
 
 //doenv config
@@ -25,7 +26,8 @@ app.get("/", (req, res) => {
 });
 // middeware
 app.use("/api/v1/test", testRoute);
-app.use("/api/v1/test", authRoute);
+app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/user", userRoute);
 
 app.listen(PORT, () => {
   console.log(`connected to port ${PORT} ....`);
