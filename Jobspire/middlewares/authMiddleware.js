@@ -8,9 +8,10 @@ const userAuth = async (req, res, next) => {
   }
   try {
     const decodedToken = JWT.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decodedToken.id);
+    console.log(decodedToken);
+    req.user = await User.findById(decodedToken._id);
     if (!req.user) {
-      return next(new Error("User not found"));
+      return next(new Error("user not found"));
     }
     next();
   } catch (error) {
