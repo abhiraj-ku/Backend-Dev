@@ -1,12 +1,15 @@
 import User from "../models/userModel.js";
+import sendEmail from "../utils/sendMail.js";
+import { v4 as uuidv4 } from "uuid";
 
 // Register Route
 export const registerRoute = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, lastName, email, password } = req.body;
 
     // finding if user already registered
-    const isUserPresent = await User.findOne({ email });
+    const isUserPresent = await User.findOne({ "email.address": email });
+
     if (isUserPresent) {
       return res.status(400).send({
         error: "User already present , Please login or Create new account",
@@ -25,12 +28,16 @@ export const registerRoute = async (req, res) => {
         error: "Password is required and must be at least 6 characters long",
       });
     }
+    // adding email validation email sender here
 
     // creating new user
     const user = await User.create({
       name,
       password,
-      email,
+      lastName,
+      email: {
+        address: email,
+      },
     });
     const token = user.createJWT();
     res.status(200).json({
@@ -38,7 +45,7 @@ export const registerRoute = async (req, res) => {
       message: "User created successfully!",
       user: {
         name: user.name,
-        lastname: user.lastName,
+        lastName: user.lastName,
         email: user.email,
         location: user.location,
       },
@@ -49,6 +56,18 @@ export const registerRoute = async (req, res) => {
     res.status(500).json({
       success: false,
       error: "Internal server error",
+    });
+  }
+};
+
+// Send email token Route
+export const getEmailToken = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  if (user.isVerified) {
+    return res.status(201).send({
+      message: "Email is already verified , Login now ",
     });
   }
 };

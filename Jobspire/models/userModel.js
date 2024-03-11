@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 import JWT from "jsonwebtoken";
+import crypto from "crypto";
 //schema
 const userSchema = new mongoose.Schema(
   {
@@ -13,10 +14,16 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
     email: {
-      type: String,
-      required: [true, " Email is Require"],
-      unique: true,
-      validate: validator.isEmail,
+      address: {
+        type: String,
+        required: [true, " Email is Required"],
+        unique: [true, "Email should be unique"],
+        validate: validator.isEmail,
+      },
+      isVerified: {
+        type: Boolean,
+        default: false,
+      },
     },
     password: {
       type: String,
@@ -24,10 +31,13 @@ const userSchema = new mongoose.Schema(
       minlength: [6, "Password length should be greater than 6 character"],
       select: true,
     },
+
     location: {
       type: String,
       default: "India",
     },
+    emailVerificationToken: String,
+    emailTokenExpiry: String,
   },
   { timestamps: true }
 );
@@ -57,6 +67,19 @@ userSchema.methods.createJWT = function () {
   return JWT.sign({ _id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRY,
   });
+};
+
+userSchema.methods.emailToken = function () {
+  const emailtoken = crypto.randomBytes(20).toString("hex");
+
+  this.emailVerificationToken = crypto
+    .createHash("sha256")
+    .update(emailtoken)
+    .digest("hex");
+
+  // 5 min for the token
+  this.emailTokenExpiry = Date.now() * 5 * 60 * 1000;
+  return emailtoken;
 };
 
 export default mongoose.model("User", userSchema);
