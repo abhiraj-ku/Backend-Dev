@@ -7,6 +7,7 @@ import connectDb from "./config/db.js";
 import testRoute from "./routes/testRoute.js";
 import authRoute from "./routes/authRoute.js";
 import userRoute from "./routes/userRoute.js";
+import jobsRoute from "./routes/jobsRoute.js";
 const app = express();
 
 //doenv config
@@ -24,10 +25,11 @@ app.use(morgan("tiny"));
 app.get("/", (req, res) => {
   res.send("<h1>Hello from backend</h1>");
 });
-// middeware
+// middewares
 app.use("/api/v1/test", testRoute);
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/jobs", jobsRoute);
 
 app.listen(PORT, () => {
   console.log(`connected to port ${PORT} ....`);
