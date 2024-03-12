@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 // Register Route
 export const registerRoute = async (req, res) => {
   try {
-    const { name, lastName, email, password } = req.body;
+    const { name, lastName, email, password, location } = req.body;
 
     // finding if user already registered
     const isUserPresent = await User.findOne({ "email.address": email });
@@ -23,11 +23,16 @@ export const registerRoute = async (req, res) => {
     if (!email) {
       return res.status(400).json({ error: "Email is required" });
     }
-    if (!password || password.length < 6) {
+    // Password validation
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    if (!password || !passwordRegex.test(password)) {
       return res.status(400).json({
-        error: "Password is required and must be at least 6 characters long",
+        error:
+          "Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 6 characters long",
       });
     }
+
     // adding email validation email sender here
 
     // creating new user
@@ -38,6 +43,7 @@ export const registerRoute = async (req, res) => {
       email: {
         address: email,
       },
+      location,
     });
     const token = user.createJWT();
     res.status(200).json({
