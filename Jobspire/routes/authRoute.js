@@ -3,8 +3,9 @@ import {
   registerRoute,
   loginRoute,
   getEmailToken,
+  verifyEmail,
 } from "../controllers/authController.js";
-import isEmailVerified from "../middlewares/isEmailVerified.js";
+import isEmailVerified from "../middlewares/emailVerMiddleware.js";
 
 const router = express.Router();
 
@@ -13,6 +14,9 @@ router.post("/register", registerRoute);
 
 // get email token route method -> POST
 router.post("/getToken", getEmailToken);
+
+// get email token and verify it method -> POST
+router.post("/verify-email/:token", verifyEmail);
 
 // LOGIN || METHOD -> POST
 router.post("/login", isEmailVerified, loginRoute);

@@ -1,6 +1,5 @@
 import User from "../models/userModel.js";
 import sendEmail from "../utils/sendMail.js";
-import { v4 as uuidv4 } from "uuid";
 
 // Register Route
 export const registerRoute = async (req, res) => {
@@ -32,9 +31,6 @@ export const registerRoute = async (req, res) => {
           "Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 6 characters long",
       });
     }
-
-    // adding email validation email sender here
-
     // creating new user
     const user = await User.create({
       name,
@@ -70,13 +66,112 @@ export const registerRoute = async (req, res) => {
 export const getEmailToken = async (req, res) => {
   const { email } = req.body;
 
-  const user = await User.findOne({ email });
-  if (user.isVerified) {
-    return res.status(201).send({
-      message: "Email is already verified , Login now ",
+  try {
+    const user = await User.findOne({ "email.address": email });
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // if email is already verified
+    if (user.email.isVerified) {
+      return res.status(201).send({
+        message: "Email is already verified , Login now ",
+      });
+    }
+
+    const emailToken = user.emailToken();
+    // console.log(emailToken);
+    // user.emailVerificationToken = emailToken;
+
+    const emailUrl = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/auth/verify-email/${emailToken}`;
+
+    const message = `Copy the token to get your email verified : ${emailUrl}`;
+
+    const emailObject = {
+      mail: user.email.address,
+      subject: "Email verification token ",
+      message: message,
+    };
+
+    await sendEmail(emailObject);
+    return res.status(200).send({
+      success: true,
+      message: "Email sent successfully",
+    });
+  } catch (error) {
+    console.error("Email token controller error:", error);
+
+    return res.status(500).send({
+      success: false,
+      message: "Error occurred while sending email",
     });
   }
 };
+
+// Verify token route
+export const verifyEmail = async (req, res) => {
+  const { token } = req.params;
+  const { email } = req.body;
+  console.log(token);
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({ "email.address": email });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Check if token is missing
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        message: "Verification token is missing",
+      });
+    }
+    user.emailVerificationToken = token;
+    // console.log(user.emailVerificationToken);
+
+    // Check if the provided token matches the email verification token
+    if (user.emailVerificationToken != token) {
+      return res.status(403).json({
+        success: false,
+        error: "Invalid email verification token",
+      });
+    }
+
+    // Check if the token has expired
+    if (user.emailTokenExpiry < Date.now()) {
+      return res.status(403).json({
+        success: false,
+        error: "Email verification token has expired",
+      });
+    }
+
+    // Mark the email as verified
+    user.email.isVerified = true;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Email verified successfully",
+    });
+  } catch (error) {
+    console.error("Email token verification controller error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error occurred while verifying email",
+    });
+  }
+};
+
 // Login Route || Method -> POST
 export const loginRoute = async (req, res) => {
   const { email, password } = req.body;
@@ -88,7 +183,7 @@ export const loginRoute = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ "email.address": email });
     if (!user) {
       return res.status(400).send({
         success: false,
@@ -105,6 +200,7 @@ export const loginRoute = async (req, res) => {
     }
     user.password = undefined;
     const token = user.createJWT();
+    user.emailVerificationToken = undefined;
 
     res.status(200).send({
       success: true,
