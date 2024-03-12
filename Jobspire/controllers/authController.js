@@ -1,5 +1,6 @@
 import User from "../models/userModel.js";
 import sendEmail from "../utils/sendMail.js";
+import zxcvbn from "zxcvbn";
 
 // Register Route
 export const registerRoute = async (req, res) => {
@@ -31,6 +32,13 @@ export const registerRoute = async (req, res) => {
           "Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 6 characters long",
       });
     }
+    const pass = password;
+    const result = zxcvbn(pass);
+
+    console.log(result.score);
+    console.log(result.feedback.warning);
+    console.log(result.feedback.suggestions);
+
     // creating new user
     const user = await User.create({
       name,
