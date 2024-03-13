@@ -8,7 +8,7 @@ const userAuth = async (req, res, next) => {
   }
   try {
     const decodedToken = JWT.verify(token, process.env.JWT_SECRET);
-    console.log(decodedToken);
+
     req.user = await User.findById(decodedToken._id);
     if (!req.user) {
       return next(new Error("user not found"));
