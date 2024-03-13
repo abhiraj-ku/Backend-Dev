@@ -1,7 +1,6 @@
 import User from "../models/userModel.js";
 import sendEmail from "../utils/sendMail.js";
 import zxcvbn from "zxcvbn";
-
 // Register Route
 export const registerRoute = async (req, res) => {
   try {
