@@ -12,7 +12,6 @@ const limitter = rateLimit({
   windowMs: 2 * 60 * 1000,
   limit: 2,
 });
-console.log(limitter);
 
 const router = express.Router();
 

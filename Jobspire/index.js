@@ -17,7 +17,7 @@ import testRoute from "./routes/testRoute.js";
 import authRoute from "./routes/authRoute.js";
 import userRoute from "./routes/userRoute.js";
 import jobsRoute from "./routes/jobsRoute.js";
-import { rateLimit } from "express-rate-limit";
+// import { rateLimit } from "express-rate-limit";
 
 const app = express();
 
@@ -35,8 +35,6 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan("tiny"));
 
-// rate limiter
-app.use(limitter);
 app.get("/", (req, res) => {
   res.send("<h1>Hello from backend</h1>");
 });
