@@ -4,6 +4,7 @@ import {
   createJobs,
   getAllJobs,
   updatejobs,
+  jobStats,
 } from "../controllers/jobsController.js";
 
 const router = express.Router();
@@ -16,6 +17,9 @@ router.post("/create-job", userAuth, createJobs);
 router.get("/get-jobs", userAuth, getAllJobs);
 
 // update jobs
-router.post("/update-job/:id", userAuth, updatejobs);
+router.post("/update-jobs/:id", userAuth, updatejobs);
+
+// jobs stats filter -> GET
+router.get("/job-stats", userAuth, jobStats);
 
 export default router;

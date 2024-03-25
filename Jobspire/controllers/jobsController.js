@@ -64,3 +64,23 @@ export const updatejobs = async (req, res, next) => {
   //res
   res.status(200).json({ updateJob });
 };
+
+// ======= DELETE JOBS ===========
+export const deleteJobController = async (req, res, next) => {
+  const { id } = req.params;
+  //find job
+  const job = await jobsModel.findOne({ _id: id });
+  //validation
+  if (!job) {
+    next(`No Job Found With This ID ${id}`);
+  }
+  if (!req.user._id === job.createdBy.toString()) {
+    next("Your Not Authorize to delete this job");
+    return;
+  }
+  await job.deleteOne();
+  res.status(200).json({ message: "Success, Job Deleted!" });
+};
+
+// Filter stats controller
+export const jobStats = async (req, res) => {};
